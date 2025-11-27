@@ -1,7 +1,6 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
-// const mapsRouter = require('./src/routes/maps.js')
 const weatherRouter = require('./src/routes/weather.js')
 const userRoutes = require('./src/routes/users')
 const incidentRoutes = require('./src/routes/incidents')
@@ -23,7 +22,6 @@ app.get('/maps-script', (req, res) => {
 
 //rutas
 app.use('/api/usuarios', userRoutes)
-// app.use('/api/maps', mapsRouter)
 app.use('/api/weather', weatherRouter)
 app.use('/api/incidents', incidentRoutes)
 app.use('/api/routes', routeQueriesRoutes)
