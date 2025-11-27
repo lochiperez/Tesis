@@ -1,4 +1,0 @@
-PORT=4000
-GOOGLE_MAPS_API_KEY=AIzaSyBa3pXGkdXRElTCuUAmHB4UK4mlMv2BKR0
-OPENWEATHER_API_KEY=8ce2e9a4ebfff467a3a9f5fb330e7fa6
-FIREBASE_CREDENTIALS="C:\Users\User\Desktop\TFGIngSftPerez\nomap\backend/key-firebase.json"

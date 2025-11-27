@@ -1,26 +1,9 @@
-// .login-container {
-//     min-height: 100vh;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-//     padding: 20px;
-// }
 .login-container{
     min-height: 100vh;
     display: flex;
     align-items: center;
 }
 
-// .login-card {
-//     background: white;
-//     border-radius: 16px;
-//     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-//     padding: 40px;
-//     max-width: 420px;
-//     width: 100%;
-//     animation: slideIn 0.4s ease-out;
-// }
 .login-card{
     background: white;
     display: flex;
@@ -28,18 +11,6 @@
     justify-content: center;
     align-items: center;
 }
-
-// @keyframes slideIn {
-//     from {
-//         opacity: 0;
-//         transform: translateY(-20px);
-//     }
-
-//     to {
-//         opacity: 1;
-//         transform: translateY(0);
-//     }
-// }
 
 .login-header {
     text-align: center;

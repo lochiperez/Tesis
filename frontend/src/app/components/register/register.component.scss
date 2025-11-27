@@ -3,7 +3,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #14309F;
     padding: 20px;
 }
 
@@ -153,7 +153,7 @@
 
 .btn-register {
     padding: 14px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #14309F;
     color: white;
     border: none;
     border-radius: 8px;
@@ -165,7 +165,7 @@
 
     &:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 8px 16px rgba(0, 27, 145, 0.3);
     }
 
     &:active:not(:disabled) {
@@ -174,7 +174,7 @@
 
     &:disabled,
     &.disabled {
-        opacity: 0.5;
+        opacity: 0.2;
         cursor: not-allowed;
         transform: none;
     }
@@ -190,7 +190,7 @@
         margin: 0;
 
         a {
-            color: #667eea;
+            color: #14309F;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
