@@ -1,0 +1,258 @@
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+.btn-user-profile {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #14309F;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.95);
+  }
+
+  svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.controls-panel {
+    position:absolute;
+    z-index: 2;
+    background: transparent;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px;
+    top: 35px;
+}
+
+.input {
+  padding: 5px 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  width: 30%;
+  &:focus {
+    outline: none;
+    border-color: #4285F4;
+    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+  }
+
+  &::placeholder {
+    color: #9e9e9e;
+  }
+}
+
+.btn-report-incident {
+  z-index: 3;
+  position: absolute;
+  bottom: 35px;
+  right: 35px;
+  padding: 20px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+  animation: fadeIn 0.3s ease-out;
+}
+.loading-indicator{
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 15px;
+}
+
+.spinner {
+  z-index: 3;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #e8eaed;
+  border-top-color: #4285F4;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.routes-panel{
+    position: absolute;
+    z-index: 2;
+    top: 100px;
+    left: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #fef7f7;
+  border: 1px solid #f5c6cb;
+  border-radius: 12px;
+  color: #c53030;
+  font-size: 14px;
+  line-height: 1.5;
+  animation: fadeIn 0.3s ease-out;
+
+  svg {
+    flex-shrink: 0;
+    color: #c53030;
+  }
+}
+
+.route-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.route-card {
+  padding: 16px;
+  background: #f8f9fa;
+  border: 2px solid #e8eaed;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #f1f3f4;
+    border-color: #dadce0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.selected {
+    background: #e8f0fe;
+    border-color: #4285F4;
+    box-shadow: 0 2px 8px rgba(66, 133, 244, 0.2);
+
+    .route-mode {
+      color: #1967d2;
+      font-weight: 600;
+    }
+  }
+}
+
+.route-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.route-mode {
+  font-size: 15px;
+  font-weight: 500;
+  color: #202124;
+}
+
+.route-duration {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a73e8;
+}
+
+.route-details {
+  display: flex;
+  gap: 10px;
+}
+
+.route-distance {
+  font-size: 13px;
+  color: #5f6368;
+}
+
+.map {
+  flex: 1;
+  width: 100%;
+}
+
+.btn-save-route {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #14309F;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 4, 111, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

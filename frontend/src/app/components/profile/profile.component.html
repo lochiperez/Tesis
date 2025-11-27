@@ -1,0 +1,231 @@
+<div class="profile-container" *ngIf="isBrowser">
+  <div class="profile-card">
+    <!-- Header -->
+    <div class="profile-header">
+      <div class="header-content">
+        <div class="avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="header-text">
+          <h1>Mi Perfil</h1>
+          <p>{{ isEditing ? 'Edita tu información personal' : 'Visualiza tu información personal' }}</p>
+        </div>
+      </div>
+      <button class="btn-back" (click)="goToMaps()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Volver
+      </button>
+    </div>
+
+    <!-- Mensajes de error y éxito -->
+    <div class="alert alert-error" *ngIf="errorMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      {{ errorMessage }}
+    </div>
+
+    <div class="alert alert-success" *ngIf="successMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      {{ successMessage }}
+    </div>
+
+    <!-- Vista de Información (cuando NO está editando) -->
+    <div class="info-view" *ngIf="!isEditing">
+      <h2 class="section-title">Información Personal</h2>
+      
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Nombre
+          </div>
+          <div class="info-value">{{ currentUser.nombre }}</div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Apellido
+          </div>
+          <div class="info-value">{{ currentUser.apellido }}</div>
+        </div>
+
+        <div class="info-item full-width">
+          <div class="info-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            Correo Electrónico
+          </div>
+          <div class="info-value">{{ currentUser.email }}</div>
+        </div>
+
+        <div class="info-item" *ngIf="currentUser.telefono">
+          <div class="info-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            Teléfono
+          </div>
+          <div class="info-value">{{ currentUser.telefono }}</div>
+        </div>
+
+        <div class="info-item" [class.full-width]="!currentUser.telefono" *ngIf="currentUser.direccion">
+          <div class="info-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            Dirección
+          </div>
+          <div class="info-value">{{ currentUser.direccion }}</div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button 
+          type="button"
+          class="btn-edit"
+          (click)="enableEdit()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          Editar Perfil
+        </button>
+      </div>
+    </div>
+
+    <!-- Formulario de edición (cuando SÍ está editando) -->
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form" *ngIf="isEditing">
+      <h2 class="section-title">Editar Información</h2>
+      
+      <div class="form-row">
+        <!-- Nombre -->
+        <div class="form-group">
+          <label for="nombre">Nombre *</label>
+          <input 
+            id="nombre"
+            type="text" 
+            formControlName="nombre"
+            class="form-input"
+            [class.error]="nombre?.invalid && nombre?.touched"
+            placeholder="Ingresa tu nombre">
+          <div class="error-message" *ngIf="nombre?.invalid && nombre?.touched">
+            <span *ngIf="nombre?.errors?.['required']">El nombre es obligatorio</span>
+            <span *ngIf="nombre?.errors?.['minlength']">El nombre debe tener al menos 2 caracteres</span>
+          </div>
+        </div>
+
+        <!-- Apellido -->
+        <div class="form-group">
+          <label for="apellido">Apellido *</label>
+          <input 
+            id="apellido"
+            type="text" 
+            formControlName="apellido"
+            class="form-input"
+            [class.error]="apellido?.invalid && apellido?.touched"
+            placeholder="Ingresa tu apellido">
+          <div class="error-message" *ngIf="apellido?.invalid && apellido?.touched">
+            <span *ngIf="apellido?.errors?.['required']">El apellido es obligatorio</span>
+            <span *ngIf="apellido?.errors?.['minlength']">El apellido debe tener al menos 2 caracteres</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Correo Electrónico *</label>
+        <input 
+          id="email"
+          type="email" 
+          formControlName="email"
+          class="form-input"
+          [class.error]="email?.invalid && email?.touched"
+          placeholder="ejemplo@correo.com">
+        <div class="error-message" *ngIf="email?.invalid && email?.touched">
+          <span *ngIf="email?.errors?.['required']">El correo electrónico es obligatorio</span>
+          <span *ngIf="email?.errors?.['email']">Por favor, ingresa un correo electrónico válido</span>
+        </div>
+      </div>
+
+      <!-- Teléfono -->
+      <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <input 
+          id="telefono"
+          type="tel" 
+          formControlName="telefono"
+          class="form-input"
+          [class.error]="telefono?.invalid && telefono?.touched"
+          placeholder="+54 11 1234-5678">
+        <div class="error-message" *ngIf="telefono?.invalid && telefono?.touched">
+          <span *ngIf="telefono?.errors?.['pattern']">Por favor, ingresa un número de teléfono válido</span>
+        </div>
+      </div>
+
+      <!-- Dirección -->
+      <div class="form-group">
+        <label for="direccion">Dirección</label>
+        <input 
+          id="direccion"
+          type="text" 
+          formControlName="direccion"
+          class="form-input"
+          placeholder="Calle, número, ciudad">
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="action-buttons">
+        <div class="edit-buttons">
+          <button 
+            type="button"
+            class="btn-cancel"
+            (click)="cancelEdit()">
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            class="btn-save"
+            [disabled]="profileForm.invalid || isSubmitting"
+            [class.disabled]="profileForm.invalid || isSubmitting">
+            <span *ngIf="!isSubmitting">Guardar Cambios</span>
+            <span *ngIf="isSubmitting">Guardando...</span>
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Botón de cerrar sesión -->
+    <div class="logout-section">
+      <button class="btn-logout" (click)="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Cerrar Sesión
+      </button>
+    </div>
+  </div>
+</div>

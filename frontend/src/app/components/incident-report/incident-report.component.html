@@ -1,0 +1,140 @@
+<div class="modal-overlay" 
+     *ngIf="isBrowser && !isSelectingLocation" 
+     (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2>Reportar Incidente</h2>
+      <button class="btn-close" (click)="closeModal()" aria-label="Cerrar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Success Message -->
+    <div class="alert alert-success" *ngIf="successMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      {{ successMessage }}
+    </div>
+
+    <!-- Error Message -->
+    <div class="alert alert-error" *ngIf="errorMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <p class="instruction">Selecciona el tipo de incidente que deseas reportar:</p>
+
+      <!-- Incident Type Selection -->
+      <div class="incident-types">
+        <div 
+          *ngFor="let type of incidentTypes"
+          class="incident-type-card"
+          [class.selected]="selectedType === type.value"
+          (click)="selectType(type.value)">
+           <img [src]="type.icon" alt="" height="75px" width="75px">
+          <div class="type-label">{{ type.label }}</div>
+          <div class="type-description">{{ type.description }}</div>
+        </div>
+      </div>
+
+      <!-- Description (Optional) -->
+      <div class="form-group" *ngIf="selectedType">
+        <label for="description">Descripción adicional (opcional)</label>
+        <textarea 
+          id="description"
+          [(ngModel)]="description"
+          class="form-textarea"
+          placeholder="Agrega detalles sobre el incidente..."
+          rows="3"
+          maxlength="200"></textarea>
+        <div class="char-count">{{ description.length }}/200</div>
+      </div>
+
+      <!-- Location Selection -->
+      <div class="form-group" *ngIf="selectedType">
+        <label>Ubicación del incidente *</label>
+        
+        <!-- Location selection button -->
+        <button 
+          type="button"
+          class="btn-select-location"
+          (click)="startLocationSelection()"
+          [disabled]="isSubmitting">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <span>Seleccionar ubicación en el mapa</span>
+        </button>
+
+        <!-- Selected location display -->
+        <div class="location-display" *ngIf="selectedLocation">
+          <div class="location-icon">📍</div>
+          <div class="location-coords">
+            <div class="coords-label">Ubicación seleccionada:</div>
+            <div class="coords-value">{{ selectedLocation.lat.toFixed(6) }}, {{ selectedLocation.lng.toFixed(6) }}</div>
+          </div>
+          <button 
+            type="button"
+            class="btn-change-location"
+            (click)="startLocationSelection()"
+            [disabled]="isSubmitting">
+            Cambiar
+          </button>
+        </div>
+
+        <p class="help-text" *ngIf="!selectedLocation">
+          Haz click en "Seleccionar ubicación" para marcar en el mapa donde ocurrió el incidente
+        </p>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button 
+        type="button"
+        class="btn-cancel"
+        (click)="closeModal()"
+        [disabled]="isSubmitting">
+        Cancelar
+      </button>
+      <button 
+        type="button"
+        class="btn-submit"
+        (click)="submitReport()"
+        [disabled]="!selectedType || !selectedLocation || isSubmitting"
+        [class.disabled]="!selectedType || !selectedLocation || isSubmitting">
+        <span *ngIf="!isSubmitting">Reportar Incidente</span>
+        <span *ngIf="isSubmitting">Reportando...</span>
+      </button>
+    </div>
+  </div>
+</div>
+  
+<!-- Floating instruction when selecting location -->
+<div class="location-instruction" *ngIf="isBrowser && isSelectingLocation">
+  <div class="instruction-content">
+    <div class="instruction-icon">📍</div>
+    <div class="instruction-text">
+      <strong>Haz click en el mapa</strong> donde ocurrió el incidente
+    </div>
+    <button class="btn-cancel-instruction" (click)="cancelLocationSelection()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+</div>

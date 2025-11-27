@@ -1,0 +1,89 @@
+<div class="container" *ngIf="isBrowser">
+  <!-- User Profile Button -->
+  <button class="btn-user-profile" (click)="openUserProfile()" title="Mi Perfil">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+  </button>
+  <!-- Loading indicator -->
+  <div class="loading-indicator" *ngIf="isLoadingRoutes">
+    <div class="spinner"></div>
+    <span>Calculando rutas...</span>
+  </div>
+  
+  <div class="controls-panel">
+    <input #originInput type="text" placeholder="Origen" class="input" />
+    <input #destInput type="text" placeholder="Destino" class="input" />
+    
+
+    <!-- Error message -->
+    <div class="error-message" *ngIf="errorMessage && !isLoadingRoutes">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      {{ errorMessage }}
+    </div>
+  </div>
+
+  <div class="routes-panel" *ngIf="routeOptions.length > 0 && !isLoadingRoutes">
+      <h3 class="routes-title">Opciones de Ruta</h3>
+      
+      <div class="route-list">
+        <div 
+          *ngFor="let route of routeOptions" 
+          class="route-card"
+          [class.selected]="selectedRouteId === route.id"
+          (click)="selectRoute(route)">
+          
+          <div class="route-header">
+            <span class="route-mode">{{ route.travelModeName }}</span>
+            <span class="route-duration">{{ route.duration }}</span>
+          </div>
+          
+          <div class="route-details">
+            <span class="route-distance">{{ route.distance }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Save Route Button -->
+      <button 
+        class="btn-save-route" 
+        (click)="saveCurrentRoute()"
+        [disabled]="!selectedRouteId || isSavingRoute"
+        *ngIf="selectedRouteId">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+          <polyline points="7 3 7 8 15 8"></polyline>
+        </svg>
+        {{ isSavingRoute ? 'Guardando...' : 'Guardar Ruta' }}
+      </button>
+    </div>
+
+      <!-- Report Incident Button -->
+    <button class="btn-report-incident" (click)="openIncidentReport()">
+      <img src="assets/img/mingcute_alert-line.png" alt="">
+    </button>
+  
+  <div #mapContainer class="map"></div>
+
+  <!-- Incident Report Modal -->
+  <app-incident-report
+    *ngIf="showIncidentReport"
+    [currentLocation]="currentMapLocation"
+    [map]="map"
+    [selectedRoute]="getSelectedRoute()"
+    (close)="closeIncidentReport()"
+    (incidentReported)="onIncidentReported($event)">
+  </app-incident-report>
+
+  <!-- User Profile Modal -->
+  <app-user-profile
+    *ngIf="showUserProfile"
+    (close)="closeUserProfile()">
+  </app-user-profile>
+</div>

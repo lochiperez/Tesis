@@ -1,0 +1,164 @@
+<div class="modal-overlay" *ngIf="isBrowser" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Mi Perfil</h2>
+      <button class="btn-close" (click)="closeModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="loading" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Cargando perfil...</p>
+    </div>
+
+    <div class="modal-body" *ngIf="!isLoading">
+      <div class="user-avatar">
+        <div class="avatar-circle">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <h3>{{ user?.nombre || 'Usuario' }}</h3>
+        <p class="user-email">{{ user?.email }}</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab" [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          Información
+        </button>
+        <button class="tab" [class.active]="activeTab === 'incidents'" (click)="setActiveTab('incidents')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          Mis Reportes ({{ userIncidents.length }})
+        </button>
+        <button class="tab" [class.active]="activeTab === 'routes'" (click)="setActiveTab('routes')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+          Rutas ({{ routeHistory.length }})
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="tab-pane" *ngIf="activeTab === 'info'">
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Nombre</div>
+              <div class="info-value">{{ user?.nombre || 'No disponible' }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Email</div>
+              <div class="info-value">{{ user?.email || 'No disponible' }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Incidentes Reportados</div>
+              <div class="info-value">{{ userIncidents.length }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Rutas Consultadas</div>
+              <div class="info-value">{{ routeHistory.length }}</div>
+            </div>
+          </div>
+
+          <div class="stats-cards">
+            <div class="stat-card">
+              <div class="stat-icon">🎯</div>
+              <div class="stat-value">{{ userIncidents.length }}</div>
+              <div class="stat-label">Reportes</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🗺️</div>
+              <div class="stat-value">{{ routeHistory.length }}</div>
+              <div class="stat-label">Rutas</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">👍</div>
+              <div class="stat-value">{{ getTotalUpvotes() }}</div>
+              <div class="stat-label">Votos Positivos</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane" *ngIf="activeTab === 'incidents'">
+          <div class="incidents-list" *ngIf="userIncidents.length > 0">
+            <div class="incident-card" *ngFor="let incident of userIncidents">
+              <div class="incident-icon">{{ getIncidentIcon(incident.type) }}</div>
+              <div class="incident-info">
+                <div class="incident-title">{{ getIncidentLabel(incident.type) }}</div>
+                <div class="incident-description" *ngIf="incident.description">{{ incident.description }}</div>
+                <div class="incident-meta">
+                  <span class="incident-time">{{ getTimeAgo(incident.timestamp) }}</span>
+                  <span class="incident-location">📍 {{ incident.lat.toFixed(4) }}, {{ incident.lng.toFixed(4) }}</span>
+                </div>
+              </div>
+              <div class="incident-votes">
+                <div class="vote-badge upvote">👍 {{ incident.upvotes || 0 }}</div>
+                <div class="vote-badge downvote">👎 {{ incident.downvotes || 0 }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="empty-state" *ngIf="userIncidents.length === 0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            </svg>
+            <h3>No has reportado incidentes</h3>
+            <p>Tus reportes de incidentes aparecerán aquí</p>
+          </div>
+        </div>
+
+        <div class="tab-pane" *ngIf="activeTab === 'routes'">
+          <div class="routes-list" *ngIf="routeHistory.length > 0">
+            <div class="route-card" *ngFor="let route of routeHistory">
+              <div class="route-icon">🗺️</div>
+              <div class="route-info">
+                <div class="route-path">
+                  <span class="route-origin">{{ route.origin }}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                  <span class="route-destination">{{ route.destination }}</span>
+                </div>
+                <div class="route-meta">
+                  <span class="route-time">{{ getTimeAgo(route.timestamp) }}</span>
+                  <span class="route-distance">{{ route.distance }}</span>
+                  <span class="route-duration">{{ route.duration }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="empty-state" *ngIf="routeHistory.length === 0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <h3>No has consultado rutas</h3>
+            <p>Tu historial de rutas aparecerá aquí</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-logout" (click)="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Cerrar Sesión
+      </button>
+      <button class="btn-close-modal" (click)="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
