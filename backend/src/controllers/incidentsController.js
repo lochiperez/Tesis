@@ -6,9 +6,9 @@ exports.createIncident = async (req, res) => {
         const { type, lat, lng, description, userId } = req.body;
 
         // Validar campos requeridos
-        if (!type || lat === undefined || lng === undefined) {
+        if (!type || lat === undefined || lng === undefined || !userId) {
             return res.status(400).json({
-                error: 'Tipo, latitud y longitud son requeridos'
+                error: 'Tipo, latitud, longitud y userId son requeridos'
             });
         }
 
@@ -26,7 +26,7 @@ exports.createIncident = async (req, res) => {
             lat: parseFloat(lat),
             lng: parseFloat(lng),
             description: description || '',
-            userId: userId || null,
+            userId: userId,
             timestamp: new Date().toISOString(),
             upvotes: 0,
             downvotes: 0,
@@ -102,6 +102,33 @@ exports.getIncidentsByArea = async (req, res) => {
     } catch (error) {
         console.error('Error al obtener incidentes por área:', error);
         res.status(500).json({ error: 'Error al obtener los incidentes' });
+    }
+};
+
+//Obtener incidentes por usuario
+exports.getIncidentsByUser = async (req, res)=>{
+    try {
+        const { userId } = req.params
+
+        if(!userId) {
+            return res.status(400).json({
+                error: 'userId es requerido'
+            })
+        }
+
+        const snapshot = await db.collection('Incidentes')
+        .where('userId', '==', userId)
+        .get()
+
+        const incidents = snapshot.docs.map(doc=> ({
+            id: doc.id,
+            ...doc.data()
+        }))
+
+        res.json(incidents)
+    } catch(error) {
+        console.log('Error al obtener incidentes por usuario: ', error)
+        res.status(500).json({ error: 'Error al obtener los incidentes del usuario'})
     }
 };
 

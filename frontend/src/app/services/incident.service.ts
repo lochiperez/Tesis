@@ -8,7 +8,7 @@ export interface Incident {
   lat: number;
   lng: number;
   timestamp: Date;
-  userId?: string;
+  userId: string;
   description?: string;
   upvotes?: number;
   downvotes?: number;
@@ -44,6 +44,10 @@ export class IncidentService {
 
   getIncidentsByArea(lat: number, lng: number, radius: number): Observable<Incident[]> {
     return this.http.get<Incident[]>(`${this.apiUrl}/area?lat=${lat}&lng=${lng}&radius=${radius}`);
+  }
+
+  getIncidentesByUser(userId:string): Observable<Incident[]>{
+    return this.http.get<Incident[]>(`${this.apiUrl}/user/${userId}`);
   }
 
   upvoteIncident(incidentId: string, userId: string): Observable<VoteResponse> {

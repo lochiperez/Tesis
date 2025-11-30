@@ -32,7 +32,7 @@ export class UserProfileComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
 
   isBrowser: boolean = false;
-  user: UserProfile | null = null;
+  user!: UserProfile;
   userIncidents: Incident[] = [];
   routeHistory: RouteHistory[] = [];
   isLoading: boolean = true;
@@ -57,7 +57,7 @@ export class UserProfileComponent implements OnInit {
     this.isLoading = true;
 
     // Cargar datos del usuario desde localStorage o AuthService
-    const storedUser = localStorage.getItem('currentUser');
+    const storedUser = sessionStorage.getItem('currentUser');
     if (storedUser) {
       this.user = JSON.parse(storedUser);
     }
@@ -72,12 +72,9 @@ export class UserProfileComponent implements OnInit {
   }
 
   loadUserIncidents() {
-    // Por ahora, obtenemos todos los incidentes y filtramos por userId
-    // En producción, deberías tener un endpoint específico
-    this.incidentService.getIncidents().subscribe({
+    this.incidentService.getIncidentesByUser(this.user?.id).subscribe({
       next: (incidents) => {
-        const userId = this.user?.id || localStorage.getItem('userId');
-        this.userIncidents = incidents.filter(inc => inc.userId === userId);
+        this.userIncidents = incidents
         console.log('User incidents:', this.userIncidents);
       },
       error: (error) => {
@@ -99,7 +96,7 @@ export class UserProfileComponent implements OnInit {
 
     this.routeService.getRoutes().subscribe({
       next: (routes) => {
-        // Filtrar rutas por userId (igual que incidentes)
+
         this.routeHistory = routes.filter(route => route.userId === userId);
         console.log('User routes loaded:', this.routeHistory);
       },
@@ -116,20 +113,24 @@ export class UserProfileComponent implements OnInit {
 
   getIncidentIcon(type: string): string {
     const icons: any = {
-      'bache': '🕳️',
+      'rutaEnMalEstado': '🕳️',
+      'retencion':'🚘',
       'accidente': '🚗',
-      'corte': '🚧',
-      'nieve': '❄️'
+      'obraEnRuta': '🚧',
+      'complicacionClimatica': '🌦️',
+      'animalesSueltos': '🐄'
     };
     return icons[type] || '📍';
   }
 
   getIncidentLabel(type: string): string {
     const labels: any = {
-      'bache': 'Bache',
-      'accidente': 'Accidente',
-      'corte': 'Corte de Ruta',
-      'nieve': 'Nieve/Hielo'
+      'rutaEnMalEstado': 'Ruta en mal estado',
+      'retencion':'Retención',
+      'accidente': 'Accidente ',
+      'obraEnRuta': 'Obra en ruta',
+      'complicacionClimatica': 'Complicación climatica',
+      'animalesSueltos': 'Animales sueltos'
     };
     return labels[type] || type;
   }

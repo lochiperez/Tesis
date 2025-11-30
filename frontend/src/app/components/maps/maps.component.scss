@@ -162,6 +162,25 @@
   }
 }
 
+.successful-message{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f7fef7;
+  border: 1px solid #d5f5c6;
+  border-radius: 12px;
+  color: #49c530;
+  font-size: 14px;
+  line-height: 1.5;
+  animation: fadeIn 0.3s ease-out;
+
+  svg {
+    flex-shrink: 0;
+    color: #49c530;
+  }
+}
+
 .route-list {
   display: flex;
   flex-direction: column;

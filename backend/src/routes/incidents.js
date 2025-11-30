@@ -4,6 +4,7 @@ const {
     createIncident,
     getIncidents,
     getIncidentsByArea,
+    getIncidentsByUser,
     upvoteIncident,
     downvoteIncident,
     removeVote,
@@ -14,6 +15,7 @@ const {
 router.post('/', createIncident);
 router.get('/', getIncidents);
 router.get('/area', getIncidentsByArea);
+router.get('/user/:userId', getIncidentsByUser)
 
 // Rutas de votación
 router.post('/:id/upvote', upvoteIncident);

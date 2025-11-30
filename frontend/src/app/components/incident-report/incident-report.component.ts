@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, Input, PLATFORM_ID, Inject, OnInit } f
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IncidentService, Incident } from '../../services/incident.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-incident-report',
@@ -41,6 +42,7 @@ export class IncidentReportComponent implements OnInit {
 
   constructor(
     private incidentService: IncidentService,
+    private authService:AuthService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -138,7 +140,6 @@ export class IncidentReportComponent implements OnInit {
 
   cancelLocationSelection() {
     this.stopLocationSelection();
-    
     // Remover marcador temporal
     if (this.tempMarker) {
       this.tempMarker.setMap(null);
@@ -170,6 +171,12 @@ export class IncidentReportComponent implements OnInit {
       return;
     }
 
+    const currentUser = this.authService.getCurrentUser()
+    if(!currentUser || !currentUser.id){
+      this.errorMessage = 'Debes iniciar sesion para reportar incidentes'
+      return;
+    }
+
     this.isSubmitting = true;
     this.errorMessage = '';
 
@@ -178,6 +185,7 @@ export class IncidentReportComponent implements OnInit {
       lat: this.selectedLocation.lat,
       lng: this.selectedLocation.lng,
       timestamp: new Date(),
+      userId: currentUser.id,
       description: this.description || undefined
     };
 

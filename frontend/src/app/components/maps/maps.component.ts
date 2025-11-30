@@ -68,6 +68,9 @@ export class MapsComponent implements AfterViewInit {
   lat:number=0
   lng:number=0
 
+  private _errorTimeout: any;
+  successfulMessage:string = ''
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private weatherService: WeatherService,
@@ -154,7 +157,7 @@ export class MapsComponent implements AfterViewInit {
 
   calculateRoutes() {
     this.isLoadingRoutes = true;
-    console.log('cuantas veces entra aaca? ', this.isLoadingRoutes)
+
     if (!this.originPlace || !this.destPlace) {
       return;
     }
@@ -180,7 +183,6 @@ export class MapsComponent implements AfterViewInit {
     this.directionsService.route(request, (result, status) => {
       this.ngZone.run(()=>{
 
-        console.log(request, 'que es request', result, status)
         if (status === google.maps.DirectionsStatus.OK && result && result.routes.length > 0) {
           this.routeOptions = result.routes.map((route, index) => {
             const leg = route.legs[0];
@@ -203,14 +205,10 @@ export class MapsComponent implements AfterViewInit {
               }
             };
           });
-          console.log(this.routeOptions, 'routeOptions')
           
           this.isLoadingRoutes = false;
           this.errorMessage = '';
-          console.time('a ver')
           this.displayAllRoutes();
-          console.timeEnd('a ver')
-          console.log('cuantas veces entra aaca? x2 a ver que onda', this.isLoadingRoutes)
         } else {
           this.isLoadingRoutes = false;
           this.routeOptions = [];
@@ -259,8 +257,6 @@ export class MapsComponent implements AfterViewInit {
 
       this.directionsRenderers.push(renderer);
     });
-
-    console.log(this.routeOptions, 'routeOption en displayAllRoutes')
   }
 
   selectRoute(routeOption: RouteOption) {
@@ -503,12 +499,12 @@ export class MapsComponent implements AfterViewInit {
 
   getIncidentConfig(type: string) {
     const incidentIcons: any = {
-      'Ruta en mal estado': { emoji: '🕳️', color: '#f97316', label: 'Bache' },
-      'Accidente': { emoji: '🚗', color: '#dc2626', label: 'Accidente' },
-      'Obra en ruta': { emoji: '🚧', color: '#eab308', label: 'Corte de Ruta' },
-      'Complicación climatica': { emoji: '🌤️', color: '#3b82f6', label: 'Nieve/Hielo' },
-      'Retención':{ emoji: '🚦', color: '#fc0303', label:'Retención' },
-      'Animales sueltos':{ emoji:'🐄',color:'#fffb00',label:'Animales sueltos' }
+      'rutaEnMalEstado': { emoji: '🕳️', color: '#f97316', label: 'Bache' },
+      'accidente': { emoji: '🚗', color: '#dc2626', label: 'Accidente' },
+      'obraEnRuta': { emoji: '🚧', color: '#eab308', label: 'Corte de Ruta' },
+      'complicacionClimatica': { emoji: '🌤️', color: '#3b82f6', label: 'Nieve/Hielo' },
+      'retencion':{ emoji: '🚦', color: '#fc0303', label:'Retención' },
+      'animalesSueltos':{ emoji:'🐄',color:'#fffb00',label:'Animales sueltos' }
     };
     return incidentIcons[type];
   }
@@ -706,17 +702,13 @@ export class MapsComponent implements AfterViewInit {
               next: () => {
                 console.log(`Incident ${incidentId} deleted successfully`);
                 
-                // Cerrar InfoWindow
                 this.incidentMarkers[markerIndex].infoWindow.close();
                 
-                // Remover marcador del mapa
                 this.incidentMarkers[markerIndex].marker.setMap(null);
                 
-                // Remover del array
                 this.incidentMarkers.splice(markerIndex, 1);
                 
-                // Mostrar notificación
-                alert('El incidente ha sido eliminado debido a su baja puntuación.');
+                this.showMessage('El incidente ha sido eliminado debido a su baja puntuación.','error');
               },
               error: (error) => {
                 console.error('Error deleting incident:', error);
@@ -736,10 +728,28 @@ export class MapsComponent implements AfterViewInit {
       },
       error: (error) => {
         console.error('Error voting:', error);
-        alert('Error al registrar el voto. Por favor, intenta nuevamente.');
+        this.showMessage('Error al registrar el voto. Por favor, intenta nuevamente.','error');
       }
     });
   }
+
+  showMessage(msg: string, error: 'error' | 'successful', duration = 5000) {
+    this.ngZone.run(()=>{
+      if(error === 'error'){
+        this.errorMessage = msg;
+      } else {
+        this.successfulMessage = msg
+      }
+    if (this._errorTimeout) {
+      clearTimeout(this._errorTimeout);
+    }
+  
+    this._errorTimeout = setTimeout(() => {
+      this.errorMessage = '';
+      this.successfulMessage = ''
+    }, duration);
+    })
+}
 
   // ===== UTILITY METHODS =====
 
@@ -773,7 +783,7 @@ export class MapsComponent implements AfterViewInit {
 
   filterIncidentsNearRoute(incidents: Incident[], route: RouteOption): Incident[] {
     const routePath = route.result.routes[0].overview_path;
-    const maxDistance = 5000000;
+    const maxDistance = 50000;
     
     return incidents.filter(incident => {
       const incidentLat = incident.lat;
@@ -889,19 +899,19 @@ export class MapsComponent implements AfterViewInit {
 
   saveCurrentRoute() {
     if (!this.selectedRouteId) {
-      alert('Por favor, selecciona una ruta primero');
+      this.showMessage('Por favor, selecciona una ruta primero','error');
       return;
     }
 
     const selectedRoute = this.routeOptions.find(r => r.id === this.selectedRouteId);
     if (!selectedRoute) {
-      alert('No se encontró la ruta seleccionada');
+      this.showMessage('No se encontró la ruta seleccionada','error');
       return;
     }
 
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser || !currentUser.id) {
-      alert('Debes iniciar sesión para guardar rutas');
+      this.showMessage('Debes iniciar sesión para guardar rutas','error');
       return;
     }
 
@@ -925,12 +935,12 @@ export class MapsComponent implements AfterViewInit {
       next: (response) => {
         console.log('Ruta guardada:', response);
         this.isSavingRoute = false;
-        alert('¡Ruta guardada exitosamente!');
+        this.showMessage('¡Ruta guardada exitosamente!', 'successful');
       },
       error: (error) => {
         console.error('Error al guardar ruta:', error);
         this.isSavingRoute = false;
-        alert('Error al guardar la ruta. Por favor, intenta nuevamente.');
+        this.showMessage('Error al guardar la ruta. Por favor, intenta nuevamente.','error');
       }
     });
   }
