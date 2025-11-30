@@ -84,6 +84,16 @@ export class MapsComponent implements AfterViewInit {
       return;
     }
 
+    try{
+      const position = await this.getCurrentPosition()
+      this. lat = position.coords.latitude;
+      this.lng = position.coords.longitude;
+    }catch(e){
+      console.log('Error al obtener ubicación')
+      this.lat = -34.6;
+      this.lng = -58.4;
+    }
+
     const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
     const { Autocomplete } = await google.maps.importLibrary("places") as google.maps.PlacesLibrary;
     const routesLibrary = await google.maps.importLibrary("routes") as any;
@@ -91,7 +101,7 @@ export class MapsComponent implements AfterViewInit {
     this.DirectionsRenderer = DirectionsRenderer;
 
     this.map = new Map(this.mapElement.nativeElement, {
-      center: { lat: -34.6, lng: -58.4 },
+      center: { lat: this.lat || -34.6, lng: this.lng || -58.4 },
       zoom: 13,
       streetViewControl: false,
       mapTypeControl: false,
@@ -130,6 +140,16 @@ export class MapsComponent implements AfterViewInit {
     (window as any).voteIncident = (incidentId: string, voteType: 'up' | 'down') => {
       this.voteOnIncident(incidentId, voteType);
     };
+  }
+
+  getCurrentPosition():Promise<any>{
+    return new Promise((resolve, reject)=>{
+          (window as any).navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge:0
+    })
+    })
   }
 
   calculateRoutes() {
